@@ -12,7 +12,11 @@
                      terminals
                      tmux
                      code
-                     nvi)
+                     nvi
+                     version-control
+                     ssh
+                     python-xyz
+                     file)
 
 (define-public sunxi-dev-src
   (package
@@ -69,6 +73,10 @@
         tmux
         cscope
         nvi
+        git
+        openssh
+        binwalk
+        file
 	sunxi-dev-src))
 
 (packages->manifest %sunxi-dev-packages)
