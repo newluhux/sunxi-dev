@@ -1,2 +1,10 @@
 * bare metal f1c100s develop environment
 
+** enter fel mode
+
+make a fel mode sdcard:
+
+#+BEGIN_SRC
+dd if=fel-sdboot.sunxi of=/dev/sdX bs=1024 seek=8
+#+END_SRC
+

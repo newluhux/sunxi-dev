@@ -1,0 +1,48 @@
+name: guix-build
+run-name: guix-build
+on:
+  schedule:
+    - cron: '40 7 * * 4'
+  workflow_dispatch:
+env:
+  GUIX: /var/guix/profiles/per-user/root/current-guix/bin/guix
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: setup src
+        run: |
+          MANIFEST="$(realpath ./dev-pkg.scm)"
+          echo "MANIFEST=$MANIFEST" >> $GITHUB_ENV
+          OSCFG="$(realpath ./dev-os.scm)"
+          echo "OSCFG=$OSCFG" >> $GITHUB_ENV
+      - name: setup guix
+        run: |
+          sudo apt install guix -y
+          sudo $GUIX pull
+      - name: organize files
+        id: organize
+        run: |
+          mkdir /tmp/out/
+          cd /tmp/out/
+          cp $(guix pack -f 'squashfs' -m $MANIFEST) sunxi-dev-singularity.sqfs
+          cp $(guix system image -t iso9660 $OSCFG) sunxi-dev-os.iso
+          echo "OUTPUT=$PWD" >> $GITHUB_ENV
+      - name: generate release tag
+        id: tag
+        run: |
+          echo "::set-output name=release_tag::$(date +"%Y%m%d")"
+      - name: make release
+        uses: softprops/action-gh-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.tag.outputs.release_tag }}
+          files: ${{ env.OUTPUT }}/*
+      - name: delete workflow runs
+        uses: GitRML/delete-workflow-runs@main
+        with:
+          retain_days: 1
+          keep_minimum_runs: 5
