@@ -20,8 +20,6 @@ jobs:
           echo "OSCFG=$OSCFG" >> $GITHUB_ENV
       - name: Install GNU Guix
         uses: PromyLOPh/guix-install-action@v1.3
-        run: |
-          guix describe
       - name: organize files
         id: organize
         run: |
