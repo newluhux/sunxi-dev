@@ -9,7 +9,7 @@ env:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3
       - name: setup src
@@ -18,13 +18,10 @@ jobs:
           echo "MANIFEST=$MANIFEST" >> $GITHUB_ENV
           OSCFG="$(realpath ./dev-os.scm)"
           echo "OSCFG=$OSCFG" >> $GITHUB_ENV
-      - name: setup guix
+      - name: Install GNU Guix
+        uses: PromyLOPh/guix-install-action@v1.3
         run: |
-          cat /etc/os-release
-          cat /etc/lsb-release
-          sudo apt update
-          sudo apt install guix -y
-          sudo $GUIX pull
+          guix describe
       - name: organize files
         id: organize
         run: |
