@@ -20,6 +20,9 @@ jobs:
           echo "OSCFG=$OSCFG" >> $GITHUB_ENV
       - name: setup guix
         run: |
+          cat /etc/os-release
+          cat /etc/lsb-release
+          sudo apt update
           sudo apt install guix -y
           sudo $GUIX pull
       - name: organize files
